@@ -28,7 +28,7 @@
 	update = merge
 [submodule "bridge/bridge-device-sse"]
 	path = bridge/bridge-device-sse
-	url = https://github.com/lorabridge/bridge-device-sse.git
+	url = git@github.com:lorabridge2/bridge-device-sse.git
 	update = merge
 [submodule "bridge/bridge-device-interface"]
 	path = bridge/bridge-device-interface
