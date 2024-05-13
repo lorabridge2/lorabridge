@@ -39,7 +39,7 @@ services:
     #     - lorabridgenet
   forwarder:
     # build: bridge-forwarder
-    image: ghcr.io/lorabridge/bridge-forwarder:latest
+    image: ghcr.io/lorabridge2/bridge-forwarder:latest
     depends_on:
       - mosquitto
       - redis
@@ -277,7 +277,7 @@ services:
   sse:
     # build:
     #   context: bridge-device-sse
-    image: ghcr.io/lorabridge/bridge-device-sse:latest
+    image: ghcr.io/lorabridge2/bridge-device-sse:latest
     depends_on:
       - zigbee2mqtt
       - redis
