@@ -1,6 +1,6 @@
 [submodule "bridge/bridge-forwarder"]
 	path = bridge/bridge-forwarder
-	url = https://github.com/lorabridge/bridge-forwarder.git
+	url = git@github.com:lorabridge2/bridge-forwarder.git
 	update = merge
 [submodule "bridge/bridge-lorawan_tx"]
 	path = bridge/bridge-lorawan_tx
