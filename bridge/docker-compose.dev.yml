@@ -51,6 +51,27 @@ services:
     restart: unless-stopped
     networks:
       - lorabridgenet
+  automation-manager:
+    build: bridge-automation-manager
+    image: localhost/automation-manager:latest
+    depends_on:
+      - redis
+      - node-red
+    environment:
+      # - FOR_MQTT_USERNAME=${MQTT_USERNAME}
+      # - FOR_MQTT_PASSWORD=${MQTT_PASSWORD}
+      # - FOR_MQTT_HOST=${MQTT_HOST}
+      # - FOR_MQTT_PORT=${MQTT_PORT}
+      # - FOR_MQTT_BASE_TOPIC=${MQTT_TOPIC}
+      # - FOR_MQTT_SUB_TOPIC=${MQTT_SUB_TOPIC}
+      - FOR_REDIS_HOST=${REDIS_HOST}
+      - FOR_REDIS_PORT=${REDIS_PORT}
+      - FOR_REDIS_DB=${REDIS_DB}
+      - FOR_REDIS_LIST=${REDIS_LIST}
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    networks:
+      - lorabridgenet
   lcd-ui:
     build: bridge-lcd-ui
     image: localhost/bridge-lcd-ui:latest
@@ -223,12 +244,26 @@ services:
     volumes:
       - zdata:/usr/src/app/data
       - ofelia:/usr/src/app/stats:ro
+  node-red:
+    image: nodered/node-red:latest
+    restart: unless-stopped
+    depends_on:
+      - mosquitto
+    environment:
+      - TZ=Europe/Vienna
+    ports:
+      - "1880:1880"
+    networks:
+      - lorabridgenet
+    volumes:
+      - node-red-data:/data
 volumes:
   mdata:
   mlog:
   redis-data:
   zdata:
   ofelia:
+  node-red-data:
 networks:
   lorabridgenet:
     attachable: true
