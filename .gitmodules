@@ -42,3 +42,7 @@
 	path = bridge/bridge-automation-manager
 	url = git@github.com:lorabridge2/bridge-automation-manager.git
 	update = merge
+[submodule "bridge/bridge-lorawan-interface"]
+	path = bridge/bridge-lorawan-interface
+	url = git@github.com:lorabridge2/bridge-lorawan-interface.git
+	update = merge
