@@ -21,22 +21,6 @@ services:
     # ports:
     #   - "1883:1883"
     #   - "9001:9001"
-    # generator:
-    #   build: generator
-    #   image: localhost/generator:latest
-    #   depends_on:
-    #     - mosquitto
-    #   environment:
-    #     - GEN_MQTT_USERNAME=${MQTT_USERNAME}
-    #     - GEN_MQTT_PASSWORD=${MQTT_PASSWORD}
-    #     - GEN_MQTT_HOST=${MQTT_HOST}
-    #     - GEN_MQTT_PORT=${MQTT_PORT}
-    #     - GEN_MQTT_TOPIC=${MQTT_TOPIC}
-    #     - GEN_INTERVAL_MS=${INTERVAL_MS}
-    #     - PYTHONUNBUFFERED=1
-    #   restart: unless-stopped
-    #   networks:
-    #     - lorabridgenet
   forwarder:
     # build: bridge-forwarder
     image: ghcr.io/lorabridge2/bridge-forwarder:latest
@@ -57,42 +41,74 @@ services:
     restart: unless-stopped
     networks:
       - lorabridgenet
-  lcd-ui:
-    # build: bridge-forwarder
-    image: ghcr.io/lorabridge/bridge-lcd-ui:latest
+  automation-manager:
+    # build: bridge-automation-manager
+    image: ghcr.io/lorabridge2/bridge-automation-manager:latest
     depends_on:
-      - mosquitto
       - redis
-    volumes:
-      # bind mount necessary gpio stuff
-      - /sys/class/gpio:/sys/class/gpio
-      - /sys/devices/platform/soc/fe200000.gpio:/sys/devices/platform/soc/fe200000.gpio
-      - type: bind
-        source: /sys/devices/platform/soc/soc:firmware/soc:firmware:gpio
-        target: /sys/devices/platform/soc/soc:firmware/soc:firmware:gpio
-      - ofelia:/ofelia:ro
+      - node-red
     environment:
-      - FOR_MQTT_HOST=${MQTT_HOST}
-      - FOR_MQTT_PORT=${MQTT_PORT}
-      - FOR_MQTT_BASE_TOPIC=${MQTT_TOPIC}
-      - FOR_REDIS_HOST=${REDIS_HOST}
-      - FOR_REDIS_PORT=${REDIS_PORT}
-      - FOR_REDIS_DB=${REDIS_DB}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_DB=${REDIS_DB}
+      - NODERED_HOST=${NODERED_HOST}
+      - NODERED_PORT=${NODERED_PORT}
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
-    devices:
-      - /dev/spidev0.0:/dev/spidev0.0
-      - /dev/spidev0.1:/dev/spidev0.1
-      - /dev/gpiomem:/dev/gpiomem
-      - /dev/i2c-1:/dev/i2c-1
-      - /dev/i2c-20:/dev/i2c-20
-      - /dev/i2c-21:/dev/i2c-21
-    group_add:
-      - "999"
-      - "997"
-      - "998"
     networks:
       - lorabridgenet
+  lorawan-interface:
+    # build: bridge-lorawan-interface
+    image: ghcr.io/lorabridge2/bridge-lorawan-interface:latest
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_DB=${REDIS_DB}
+      - SERIAL_PORT=${SERIAL_PORT}
+      - PYTHONUNBUFFERED=1
+    devices:
+      - /dev/ttyACM0:/dev/ttyACM0
+    restart: unless-stopped
+    networks:
+      - lorabridgenet
+  # lcd-ui:
+  #   # build: bridge-forwarder
+  #   image: ghcr.io/lorabridge/bridge-lcd-ui:latest
+  #   depends_on:
+  #     - mosquitto
+  #     - redis
+  #   volumes:
+  #     # bind mount necessary gpio stuff
+  #     - /sys/class/gpio:/sys/class/gpio
+  #     - /sys/devices/platform/soc/fe200000.gpio:/sys/devices/platform/soc/fe200000.gpio
+  #     - type: bind
+  #       source: /sys/devices/platform/soc/soc:firmware/soc:firmware:gpio
+  #       target: /sys/devices/platform/soc/soc:firmware/soc:firmware:gpio
+  #     - ofelia:/ofelia:ro
+  #   environment:
+  #     - FOR_MQTT_HOST=${MQTT_HOST}
+  #     - FOR_MQTT_PORT=${MQTT_PORT}
+  #     - FOR_MQTT_BASE_TOPIC=${MQTT_TOPIC}
+  #     - FOR_REDIS_HOST=${REDIS_HOST}
+  #     - FOR_REDIS_PORT=${REDIS_PORT}
+  #     - FOR_REDIS_DB=${REDIS_DB}
+  #     - PYTHONUNBUFFERED=1
+  #   restart: unless-stopped
+  #   devices:
+  #     - /dev/spidev0.0:/dev/spidev0.0
+  #     - /dev/spidev0.1:/dev/spidev0.1
+  #     - /dev/gpiomem:/dev/gpiomem
+  #     - /dev/i2c-1:/dev/i2c-1
+  #     - /dev/i2c-20:/dev/i2c-20
+  #     - /dev/i2c-21:/dev/i2c-21
+  #   group_add:
+  #     - "999"
+  #     - "997"
+  #     - "998"
+  #   networks:
+  #     - lorabridgenet
   ofelia:
     image: mcuadros/ofelia:v0.3.7
     network_mode: host
@@ -171,48 +187,48 @@ services:
       retries: 0
       start_period: 10s
       disable: true
-  lorawan_tx:
-    # build: bridge-lorawan_tx
-    image: ghcr.io/lorabridge/bridge-lorawan_tx:latest
-    restart: unless-stopped
-    volumes:
-      # - ./data:/app/data
-      - /run/udev:/run/udev:ro
-      # - /sys/class/gpio:/sys/class/gpio
-      # - /sys:/sys
-      # bind mount necessary gpio stuff
-      - /sys/class/gpio:/sys/class/gpio
-      - /sys/devices/platform/soc/fe200000.gpio:/sys/devices/platform/soc/fe200000.gpio
-      - type: bind
-        source: /sys/devices/platform/soc/soc:firmware/soc:firmware:gpio
-        target: /sys/devices/platform/soc/soc:firmware/soc:firmware:gpio
-    environment:
-      - TZ=Europe/Vienna
-      - DEV_EUI=${LORA_DEV_EUI}
-      - DEV_KEY=${LORA_DEV_KEY}
-      - REDIS_LIST=${REDIS_LIST}
-      - USE_LB_GW=1
-      # - ZIGBEE2MQTT_CONFIG_SERIAL_PORT=/dev/ttyUSB0
-    devices:
-      - /dev/spidev0.0:/dev/spidev0.0
-      - /dev/spidev0.1:/dev/spidev0.1
-      - /dev/gpiomem:/dev/gpiomem
-      # - /dev/mem:/dev/mem
-      # - /dev/ttyAMA0:/dev/ttyAMA0
-      # privileged: true
-      # cap_add:
-      #   - SYS_RAWIO
-    group_add:
-      - "999"
-      - "997"
-      # - spi
-      # need root, because of /sys
-      # user: 1337:1337
-    networks:
-      - lorabridgenet
-    depends_on:
-      - redis
-    read_only: true
+  # lorawan_tx:
+  #   # build: bridge-lorawan_tx
+  #   image: ghcr.io/lorabridge/bridge-lorawan_tx:latest
+  #   restart: unless-stopped
+  #   volumes:
+  #     # - ./data:/app/data
+  #     - /run/udev:/run/udev:ro
+  #     # - /sys/class/gpio:/sys/class/gpio
+  #     # - /sys:/sys
+  #     # bind mount necessary gpio stuff
+  #     - /sys/class/gpio:/sys/class/gpio
+  #     - /sys/devices/platform/soc/fe200000.gpio:/sys/devices/platform/soc/fe200000.gpio
+  #     - type: bind
+  #       source: /sys/devices/platform/soc/soc:firmware/soc:firmware:gpio
+  #       target: /sys/devices/platform/soc/soc:firmware/soc:firmware:gpio
+  #   environment:
+  #     - TZ=Europe/Vienna
+  #     - DEV_EUI=${LORA_DEV_EUI}
+  #     - DEV_KEY=${LORA_DEV_KEY}
+  #     - REDIS_LIST=${REDIS_LIST}
+  #     - USE_LB_GW=1
+  #     # - ZIGBEE2MQTT_CONFIG_SERIAL_PORT=/dev/ttyUSB0
+  #   devices:
+  #     - /dev/spidev0.0:/dev/spidev0.0
+  #     - /dev/spidev0.1:/dev/spidev0.1
+  #     - /dev/gpiomem:/dev/gpiomem
+  #     # - /dev/mem:/dev/mem
+  #     # - /dev/ttyAMA0:/dev/ttyAMA0
+  #     # privileged: true
+  #     # cap_add:
+  #     #   - SYS_RAWIO
+  #   group_add:
+  #     - "999"
+  #     - "997"
+  #     # - spi
+  #     # need root, because of /sys
+  #     # user: 1337:1337
+  #   networks:
+  #     - lorabridgenet
+  #   depends_on:
+  #     - redis
+  #   read_only: true
   interface:
     # build:
     #   context: bridge-device-interface
@@ -309,12 +325,26 @@ services:
       retries: 1
       start_period: 15s
       disable: true
+  node-red:
+    image: nodered/node-red:latest
+    restart: unless-stopped
+    depends_on:
+      - mosquitto
+    environment:
+      - TZ=Europe/Vienna
+    ports:
+      - "1880:1880"
+    networks:
+      - lorabridgenet
+    volumes:
+      - node-red-data:/data
 volumes:
   mdata:
   mlog:
   redis-data:
   zdata:
   ofelia:
+  node-red-data:
 networks:
   lorabridgenet:
     attachable: true
