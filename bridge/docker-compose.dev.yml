@@ -58,16 +58,11 @@ services:
       - redis
       - node-red
     environment:
-      # - FOR_MQTT_USERNAME=${MQTT_USERNAME}
-      # - FOR_MQTT_PASSWORD=${MQTT_PASSWORD}
-      # - FOR_MQTT_HOST=${MQTT_HOST}
-      # - FOR_MQTT_PORT=${MQTT_PORT}
-      # - FOR_MQTT_BASE_TOPIC=${MQTT_TOPIC}
-      # - FOR_MQTT_SUB_TOPIC=${MQTT_SUB_TOPIC}
-      - FOR_REDIS_HOST=${REDIS_HOST}
-      - FOR_REDIS_PORT=${REDIS_PORT}
-      - FOR_REDIS_DB=${REDIS_DB}
-      - FOR_REDIS_LIST=${REDIS_LIST}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_DB=${REDIS_DB}
+      - NODERED_HOST=${NODERED_HOST}
+      - NODERED_PORT=${NODERED_PORT}
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
     networks:
