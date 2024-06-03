@@ -65,6 +65,8 @@ services:
     devices:
       - /dev/ttyACM0:/dev/ttyACM0
     restart: unless-stopped
+    group_add:
+      - "20"
     networks:
       - lorabridgenet
   # lcd-ui:
