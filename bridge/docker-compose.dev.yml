@@ -120,7 +120,7 @@ services:
       [
         "sh",
         "-c",
-        ' docker-entrypoint.sh --appendonly "yes" '
+        ' docker-entrypoint.sh --appendonly "yes" --notify-keyspace-events "KEA" '
       ]
     networks:
       - lorabridgenet
