@@ -215,13 +215,81 @@ services:
     depends_on:
       - mosquitto
       - redis
+  flow_ui:
+    # build:
+    #   context: bridge-device-interface
+    #   args:
+    #     VITE_SSE_ADDR: http://sse:8080
+    #     VITE_REDIS_CONN_STRING: redis://redis:6379
+    image: ghcr.io/lorabridge2/gateway-flow-ui:latest
+    depends_on:
+      - redis
+      - couchdb
+    restart: unless-stopped
+    networks:
+      - loragatenet
+    ports:
+      - "3000:3000"
+    # expose:
+    #   - 3000
+    user: 1337:1337
+    read_only: true
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -O - http://127.0.0.1:3000/device_attributes/health --spider -q || exit 1"
+        ]
+      interval: 15s
+      timeout: 15s
+      retries: 1
+      start_period: 15s
+      disable: true
+
+  couchdb:
+    image: couchdb:3
+    environment:
+      - COUCHDB_USER=${COUCHDB_USER}
+      - COUCHDB_PASSWORD=${COUCHDB_PASSWORD}
+    ports:
+      - '5984:5984'
+        #- '4369:4369'
+        #- '9100:9100'
+    volumes:
+      - couchdb_data:/bitnami/couchdb
+      - ./couchdb/config.ini:/opt/couchdb/etc/local.d/10-config.ini:ro
+    user: 1337:1337
+    networks:
+      - loragatenet
+  flow_manager:
+    # build: gateway-device_manager
+    image: ghcr.io/lorabridge/gateway-flow-manager:latest
+    environment:
+      - DEV_MQTT_USERNAME=${MQTT_USERNAME}
+      - DEV_MQTT_PASSWORD=${MQTT_PASSWORD}
+      - DEV_MQTT_HOST=${MQTT_HOST}
+      - DEV_MQTT_PORT=${MQTT_PORT}
+      - DEV_MAN_TOPIC=${DEV_MAN_TOPIC}
+      - DEV_REDIS_HOST=${REDIS_HOST}
+      - DEV_REDIS_PORT=${REDIS_PORT}
+      - DEV_REDIS_DB=${REDIS_DB}
+      - DEV_STATE_TOPIC=${DEV_STATE_TOPIC}
+      - DEV_DISCOVERY_TOPIC=${DEV_DISCOVERY_TOPIC}
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    networks:
+      - loragatenet
+    depends_on:
+      - mosquitto
+      - redis
 
 volumes:
   redisdata:
   homeassistant_data:
   mdata:
   mlog:
-  postgresqldata2:	
+  postgresqldata2:
+  couchdb_data:
 
 networks:
     loragatenet:
