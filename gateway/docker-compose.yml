@@ -233,6 +233,15 @@ services:
     # expose:
     #   - 3000
     user: 1337:1337
+    environment:
+      - PUBLIC_COUCHDB_USER=${COUCHDB_USER}
+      - PUBLIC_COUCHDB_PASSWORD=${COUCHDB_PASSWORD}
+      - PUBLIC_COUCHDB_HOST=${COUCHDB_HOST}
+      - PUBLIC_COUCHDB_PORT=${COUCHDB_PORT}
+      - PUBLIC_COUCHDB_DB=${COUCHDB_DB}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_DB=${REDIS_DB}
     read_only: true
     healthcheck:
       test:
@@ -269,12 +278,9 @@ services:
       - DEV_MQTT_PASSWORD=${MQTT_PASSWORD}
       - DEV_MQTT_HOST=${MQTT_HOST}
       - DEV_MQTT_PORT=${MQTT_PORT}
-      - DEV_MAN_TOPIC=${DEV_MAN_TOPIC}
       - DEV_REDIS_HOST=${REDIS_HOST}
       - DEV_REDIS_PORT=${REDIS_PORT}
       - DEV_REDIS_DB=${REDIS_DB}
-      - DEV_STATE_TOPIC=${DEV_STATE_TOPIC}
-      - DEV_DISCOVERY_TOPIC=${DEV_DISCOVERY_TOPIC}
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
     networks:
