@@ -1,0 +1,17 @@
+services:
+  couchdb:
+    image: localhost/couchdb
+    # platform: linux/arm64
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=couchdb
+    ports:
+      - '5984:5984'
+        #- '4369:4369'
+        #- '9100:9100'
+    volumes:
+      - couchdb_data:/bitnami/couchdb
+      - ./config.ini:/opt/couchdb/etc/local.d/10-config.ini
+    # user: 1337:1337
+volumes:
+  couchdb_data:
