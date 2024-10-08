@@ -50,3 +50,7 @@
 	path = gateway/gateway-flow-manager
 	url = git@github.com:lorabridge2/gateway-flow-manager.git
 	update = merge
+[submodule "gateway/gateway-flow-ui"]
+	path = gateway/gateway-flow-ui
+	url = git@github.com:lorabridge2/gateway-flow-ui.git
+	update = merge
