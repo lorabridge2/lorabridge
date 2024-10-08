@@ -67,6 +67,7 @@ services:
             '
             docker-entrypoint.sh
             --appendonly "yes"
+            --notify-keyspace-events "KEA"
             '
     ]
 
