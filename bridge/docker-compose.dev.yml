@@ -47,6 +47,8 @@ services:
       - REDIS_DB=${REDIS_DB}
       - NODERED_HOST=${NODERED_HOST}
       - NODERED_PORT=${NODERED_PORT}
+      - MQTT_HOST=${MQTT_HOST}
+      - MQTT_PORT=${MQTT_PORT}
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
     networks:
