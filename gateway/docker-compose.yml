@@ -163,7 +163,7 @@ services:
 
   converter:
     # build: gateway-converter
-    image: ghcr.io/lorabridge/gateway-converter:latest
+    image: ghcr.io/lorabridge2/gateway-converter:latest
     environment:
       - CON_MQTT_USERNAME=${MQTT_USERNAME}
       - CON_MQTT_PASSWORD=${MQTT_PASSWORD}
