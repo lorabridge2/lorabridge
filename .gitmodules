@@ -24,7 +24,7 @@
 	update = merge
 [submodule "gateway/gateway-converter"]
 	path = gateway/gateway-converter
-	url = https://github.com/lorabridge/gateway-converter.git
+	url = git@github.com:lorabridge2/gateway-converter.git
 	update = merge
 [submodule "bridge/bridge-device-sse"]
 	path = bridge/bridge-device-sse
