@@ -330,7 +330,8 @@ services:
       start_period: 15s
       disable: true
   node-red:
-    image: nodered/node-red:latest
+    image: ghcr.io/lorabridge2/bridge-node-red:latest
+    #image: nodered/node-red:latest
     restart: unless-stopped
     depends_on:
       - mosquitto
