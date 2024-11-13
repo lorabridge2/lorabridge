@@ -58,3 +58,7 @@
 	path = bridge/bridge-node-red
 	url = git@github.com:lorabridge2/bridge-node-red.git
 	update = merge
+[submodule "bridge/bridge-lorawan-interface-watcher"]
+	path = bridge/bridge-lorawan-interface-watcher
+	url = git@github.com:lorabridge2/bridge-lorawan-interface-watcher.git
+	update = merge
