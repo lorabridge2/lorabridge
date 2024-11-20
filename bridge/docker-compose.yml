@@ -56,6 +56,8 @@ services:
       - MQTT_HOST=${MQTT_HOST}
       - MQTT_PORT=${MQTT_PORT}
       - PYTHONUNBUFFERED=1
+    volumes:
+      - flows:/home/decompression/backup
     restart: unless-stopped
     networks:
       - lorabridgenet
@@ -363,6 +365,7 @@ volumes:
   zdata:
   ofelia:
   node-red-data:
+  flows:
 networks:
   lorabridgenet:
     attachable: true
