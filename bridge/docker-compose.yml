@@ -354,6 +354,8 @@ services:
       - lorabridgenet
     volumes:
       - node-red-data:/data
+    healthcheck:
+      disable: true
 volumes:
   mdata:
   mlog:
