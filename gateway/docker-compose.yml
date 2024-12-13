@@ -184,7 +184,7 @@ services:
 
   ha_integration:
     # build: gateway-ha_integration
-    image: ghcr.io/lorabridge/gateway-ha_integration:latest
+    image: ghcr.io/lorabridge2/gateway-ha_integration:latest
     environment:
       - HA_MQTT_USERNAME=${MQTT_USERNAME}
       - HA_MQTT_PASSWORD=${MQTT_PASSWORD}
@@ -201,7 +201,7 @@ services:
 
   device_manager:
     # build: gateway-device_manager
-    image: ghcr.io/lorabridge/gateway-device_manager:latest
+    image: ghcr.io/lorabridge2/gateway-device_manager:latest
     environment:
       - DEV_MQTT_USERNAME=${MQTT_USERNAME}
       - DEV_MQTT_PASSWORD=${MQTT_PASSWORD}
