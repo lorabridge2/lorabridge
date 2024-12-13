@@ -94,7 +94,7 @@ services:
       - redis
     user: 1337:995
     networks:
-      - internal
+      - lorabridgenet
   # lcd-ui:
   #   # build: bridge-forwarder
   #   image: ghcr.io/lorabridge/bridge-lcd-ui:latest
