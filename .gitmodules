@@ -62,3 +62,7 @@
 	path = bridge/bridge-lorawan-interface-watcher
 	url = git@github.com:lorabridge2/bridge-lorawan-interface-watcher.git
 	update = merge
+[submodule "gateway/gateway-chirp-helper"]
+	path = gateway/gateway-chirp-helper
+	url = git@github.com:lorabridge2/gateway-chirp-helper.git
+	update = merge
