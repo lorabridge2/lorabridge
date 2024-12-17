@@ -295,7 +295,9 @@ services:
       - loragatenet
     depends_on:
       mosquitto:
+        condition: service_started
       redis:
+        condition: service_started
       chirp_helper:
         condition: service_completed_successfully
   chirp_helper:
