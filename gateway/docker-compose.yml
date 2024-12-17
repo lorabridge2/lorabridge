@@ -294,8 +294,30 @@ services:
     networks:
       - loragatenet
     depends_on:
-      - mosquitto
-      - redis
+      mosquitto:
+      redis:
+      chirp_helper:
+      condition: service_completed_successfully
+  chirp_helper:
+    # build: gateway-device_manager
+    image: ghcr.io/lorabridge2/gateway-chirp-helper:latest
+    environment:
+      - CHIRP_HOST=chirpstack
+      - CHIRP_PORT=8080
+      - CHIRP_USER=${CHIRPSTACK_USER}
+      - CHIRP_PASSWORD=${CHIRPSTACK_PASSWORD}
+      - DEV_EUI=${CHIRPSTACK_DEV_EUI}
+      - PYTHONUNBUFFERED=1
+    restart: on-failure
+    networks:
+      - loragatenet
+    depends_on:
+      chirpstack:
+        condition: service_started
+    volumes:
+      - token:/token
+      - device:/device
+
 
 volumes:
   redisdata:
@@ -304,6 +326,8 @@ volumes:
   mlog:
   postgresqldata2:
   couchdb_data:
+  token:
+  device:
 
 networks:
     loragatenet:
