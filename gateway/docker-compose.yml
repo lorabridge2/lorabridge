@@ -291,6 +291,8 @@ services:
       - DEV_REDIS_DB=${REDIS_DB}
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
+    volumes:
+      - device:/device
     networks:
       - loragatenet
     depends_on:
