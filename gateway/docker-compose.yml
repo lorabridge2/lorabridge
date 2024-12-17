@@ -213,13 +213,20 @@ services:
       - DEV_REDIS_DB=${REDIS_DB}
       - DEV_STATE_TOPIC=${DEV_STATE_TOPIC}
       - DEV_DISCOVERY_TOPIC=${DEV_DISCOVERY_TOPIC}
+      - DEV_EUI=${CHIRPSTACK_DEV_EUI}
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
+    volumes:
+      - device:/device
     networks:
       - loragatenet
     depends_on:
-      - mosquitto
-      - redis
+      mosquitto:
+        condition: service_started
+      redis:
+        condition: service_started
+      chirp_helper:
+        condition: service_completed_successfully
   flow_ui:
     # build:
     #   context: bridge-device-interface
