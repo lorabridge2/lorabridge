@@ -289,6 +289,7 @@ services:
       - DEV_REDIS_HOST=${REDIS_HOST}
       - DEV_REDIS_PORT=${REDIS_PORT}
       - DEV_REDIS_DB=${REDIS_DB}
+      - DEV_EUI=${CHIRPSTACK_DEV_EUI}
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
     volumes:
