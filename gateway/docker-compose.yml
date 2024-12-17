@@ -297,7 +297,7 @@ services:
       mosquitto:
       redis:
       chirp_helper:
-      condition: service_completed_successfully
+        condition: service_completed_successfully
   chirp_helper:
     # build: gateway-device_manager
     image: ghcr.io/lorabridge2/gateway-chirp-helper:latest
