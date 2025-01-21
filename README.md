@@ -16,7 +16,7 @@
 <br />
 <div align="center">
   <a href="[https://github.com/lorabridge/lorabridge](https://github.com/lorabridge/lorabridge)">
-    <img src="https://github.com/lorabridge/lorabridge.github.io/blob/main/docs/assets/loradatabridge_logo_large.png" alt="Logo" width="220">
+    <img src="https://github.com/lorabridge2/lorabridge.github.io/blob/main/docs/assets/lorabridge2_frontpage_system_diagram.png" alt="Logo" width="220">
   </a>
 
   <h2 align="center">Long-Range Data Bridge (LoRaBridge)</h2>
