@@ -16,15 +16,15 @@
 <br />
 <div align="center">
   <a href="[https://github.com/lorabridge/lorabridge](https://github.com/lorabridge/lorabridge)">
-    <img src="https://github.com/lorabridge2/lorabridge.github.io/blob/main/docs/assets/lorabridge2_frontpage_system_diagram.png" alt="Logo" width="220">
+    <img src="https://github.com/lorabridge2/lorabridge2.github.io/blob/main/docs/assets/lorabridge2_logo_large.png" alt="Logo" width="220">
   </a>
 
   <h2 align="center">Long-Range Data Bridge (LoRaBridge)</h2>
 
   <p align="center">
-    Convert your cheap Zigbee sensors into LoRaWAN sensors!
+    Extend range of Zigbee based automations!
     <br />
-    <a href="https://lorabridge.github.io/"><strong>Explore the docs »</strong></a>   
+    <a href="https://lorabridge2.github.io/"><strong>Explore the docs »</strong></a>   
   </p>
 </div>
 
@@ -59,25 +59,26 @@
 ## About The Project
 
 
-<img src="https://github.com/lorabridge/lorabridge.github.io/blob/main/docs/assets/lorabridge_frontpage_system_diagram.png" alt="Logo" width="1000">
+<img src="https://github.com/lorabridge2/lorabridge2.github.io/blob/main/docs/assets/lorabridge2_frontpage_system_diagram.png" alt="Logo" width="1000">
   
 
-LoRaBridge delivers range extension for wireless ZigBee sensors via LoRaWAN. Hence, e.g., home automation sensors can be mounted
+LoRaBridge offers a range extension for ZigBee based automations via LoRaWAN. Hence, automation configurations can be mounted
 in locations, such as cellars, attics or garden houses, which are hard to reach with medium/short range connectivity.
 
 The two key components of LoRaBridge are: 
-1) <i> Bridge unit </i> - Collects, compresses and transmits sensor data over LoRaWAN 
-2) <i> Gateway unit </i> - Receives, decompresses and forwards the sensor data to a backend system. 
+1) <i> Bridge unit </i> - LoRaWAN&Zigbee powered automation hub 
+2) <i> LoRaMation </i> - Easy-to-use flow-based UI for defining automations
 
-Currently the full installation of LoRaBridge connects Zigbee sensors (supported by <a href="https://www.zigbee2mqtt.io/">Zigbee2MQTT</a>) to <a href="https://www.home-assistant.io/">Home Assistant</a>. 
-For details on how to customize LoRaBridge for your own needs, please refer to the [developer manual](https://lorabridge.github.io/development/dev.html).
+For details on how to install LoRaBridge and how to setup automations, please refer to the [developer manual](https://lorabridge2.github.io/development/dev.html).
 
 
 ## Features
 
-- Compression and scheduling algorithms enable range extension for multiple Zigbee sensors over a single LoRaWAN connection
-- Easy to use single button UI for Zigbee device pairing
-- Web UI for device management
+- Basic set of automation nodes out-of-the-box
+- Efficient compression of home automation configuration data (transmitted over LoRaWAN downlink)
+- Range extension for Zigbee sensor data (transmitted over LoRaWAN uplink)
+- Bridge time synchronization over LoRaWAN
+- Web UIs for automation setup and device management
 - Preinstalled Zigbee2MQTT and Home Assistant containers
 - Ansible setup scripts for automated deployment
 
@@ -87,10 +88,8 @@ Check out [user manual](https://lorabridge.github.io/setup/Installation.html) fo
 
 ## Known issues and limitations
 
-- Range extension is available only for uplink communication (e.g. Zigbee sensor values)
 - Range extensions over large distances may likely cause data loss&latency due to Zigbee sensor data rate exceeding the LoRaWAN link data rate.
 - Operation has been verified with a small subset of sensors supported by Zigbee2MQTT
-- LoRaWAN reception might become instable due to lack of realtime support in Raspberry PI OS
 
 ## License
 
