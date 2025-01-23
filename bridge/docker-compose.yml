@@ -353,6 +353,7 @@ services:
     restart: unless-stopped
     depends_on:
       - mosquitto
+      - redis
     environment:
       - TZ=Europe/Vienna
     ports:
@@ -361,6 +362,7 @@ services:
       - lorabridgenet
     volumes:
       - node-red-data:/data
+      - ./config/node-red/settings.js:/data/settings.js:ro
     healthcheck:
       disable: true
 volumes:
