@@ -170,14 +170,17 @@ services:
       - CON_MQTT_HOST=${MQTT_HOST}
       - CON_MQTT_PORT=${MQTT_PORT}
       - CON_CHIRP_TOPIC=${CHIRP_TOPIC}
-      - CON_DEV_MAN_TOPIC=${DEV_MAN_TOPIC}
+      # - CON_DEV_MAN_TOPIC=${DEV_MAN_TOPIC}
       - DEV_REDIS_HOST=${REDIS_HOST}
       - DEV_REDIS_PORT=${REDIS_PORT}
       - DEV_REDIS_DB=${REDIS_DB}
+      - DEV_EUI=${CHIRPSTACK_DEV_EUI}
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
     networks:
       - loragatenet
+    volumes:
+      - device:/device
     depends_on:
       - mosquitto
       - redis
