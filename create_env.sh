@@ -21,6 +21,9 @@ echo "LORA_DEV_EUI=${DEV_EUI^^}" >> $FN
 DEV_KEY=$(tr -cd "[:xdigit:]" < /dev/urandom | head -c 32)
 echo "LORA_DEV_KEY=${DEV_KEY^^}" >> $FN
 
+JOIN_EUI=$(tr -cd "[:xdigit:]" < /dev/urandom | head -c 16)
+echo "LORA_JOIN_EUI=${JOIN_EUI^^}" >> $FN
+
 HTTP_USER=admin
 HTTP_PASS=$(tr -cd "[:graph:]" < /dev/urandom | head -c 20)
 HTPASSWD=$(htpasswd -nbB $HTTP_USER $HTTP_PASS)
