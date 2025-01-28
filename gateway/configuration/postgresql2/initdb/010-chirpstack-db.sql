@@ -500,7 +500,7 @@ INSERT INTO public.tenant_user (tenant_id, user_id, created_at, updated_at, is_a
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: chirpstack
 --
 
-INSERT INTO public."user" (id, external_id, created_at, updated_at, is_admin, is_active, email, email_verified, password_hash, note) VALUES ('00000000-0000-0000-0000-000000000001', NULL, '2022-05-05 11:02:55.650923+00', '2022-06-08 15:54:07.20828+00', true, true, 'admin', false, 'PBKDF2$sha512$1$l8zGKtxRESq3PA2kFhHRWA==$H3lGMxOt55wjwoc+myeOoABofJY9oDpldJa7fhqdjbh700V6FLPML75UmBOt9J5VFNjAL1AvqCozA1HJM0QVGA==', '');
+INSERT INTO public."user" (id, external_id, created_at, updated_at, is_admin, is_active, email, email_verified, password_hash, note) VALUES ('00000000-0000-0000-0000-000000000001', NULL, '2022-05-05 11:02:55.650923+00', '2022-06-08 15:54:07.20828+00', true, true, 'admin', false, '$pbkdf2-sha512$i=1,l=64$l8zGKtxRESq3PA2kFhHRWA$H3lGMxOt55wjwoc+myeOoABofJY9oDpldJa7fhqdjbh700V6FLPML75UmBOt9J5VFNjAL1AvqCozA1HJM0QVGA', '');
 
 
 --
