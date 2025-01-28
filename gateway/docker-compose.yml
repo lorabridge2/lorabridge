@@ -47,6 +47,7 @@ services:
       - POSTGRES_PASSWORD=root 
       - POSTGRES_DEV_EUI=${CHIRPSTACK_DEV_EUI}
       - POSTGRES_DEV_KEY=${CHIRPSTACK_DEV_KEY}
+      - POSTGRES_HASH=${CHIRPSTACK_HASH}
     volumes:
       - ./configuration/postgresql2/initdb:/docker-entrypoint-initdb.d
       - postgresqldata2:/var/lib/postgresql/data

@@ -60,8 +60,19 @@ echo "DEV_STATE_TOPIC=lorabridge/state" >> $FN
 echo "CHIRPSTACK_DEV_EUI=\x${DEV_EUI^^}" >> $FN
 echo "CHIRPSTACK_DEV_KEY=\x${DEV_KEY^^}" >> $FN
 echo "CHIRPSTACK_API_SECRET=$(openssl rand -base64 32)" >> $FN
-echo "CHIRPSTACK_USER=admin" >> $FN
-echo "CHIRPSTACK_PASSWORD=admin" >> $FN
+
+CHIRPSTACK_USER=admin
+CHIRPSTACK_PASS=$(tr -cd "[:graph:]" < /dev/urandom | head -c 20)
+CHIRPSTACK_HASH=$(python3 -c "import os;import hashlib;import base64;iterations=210000;dklen=64;salt=os.urandom(32);print(f'\$pbkdf2-sha512\$i={iterations},l={dklen}\${base64.b64encode(salt).decode()}\${base64.b64encode(hashlib.pbkdf2_hmac('sha512','$CHIRPSTACK_PASS'.encode(), salt,iterations=iterations,dklen=dklen)).decode()}')")
+
+echo "CHIRPSTACK_USER=$CHIRPSTACK_USER" >> $FN
+echo "CHIRPSTACK_PASSWORD=$CHIRPSTACK_PASS" >> $FN
+echo "CHIRPSTACK_HASH=$CHIRPSTACK_HASH" >> $FN
+
+echo "Your credentials for the chirpstack webinterface are"
+echo "username: $CHIRPSTACK_USER"
+echo "password: $CHIRPSTACK_PASS"
+echo "$(tput setaf 1)You need to remember them, storing them in a $(tput bold)password safe$(tput sgr0 setaf 1) is recommended!$(tput sgr0)"
 
 echo "COUCHDB_USER=admin" >> $FN
 echo "COUCHDB_PASSWORD=couchdb" >> $FN
