@@ -316,7 +316,6 @@ services:
       chirp_helper:
         condition: service_completed_successfully
   chirp_helper:
-    # build: gateway-device_manager
     image: ghcr.io/lorabridge2/gateway-chirp-helper:latest
     environment:
       - CHIRP_HOST=chirpstack
@@ -334,7 +333,29 @@ services:
     volumes:
       - token:/token
       - device:/device
-
+  connection-watcher:
+    image: ghcr.io/lorabridge2/gateway-connection-watcher:latest
+    environment:
+      - CHIRP_HOST=chirpstack
+      - CHIRP_PORT=8080
+      - DEV_EUI=${CHIRPSTACK_DEV_EUI}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_DB=${REDIS_DB}
+      - PYTHONUNBUFFERED=1
+    restart: on-failure
+    networks:
+      - loragatenet
+    depends_on:
+      chirpstack:
+        condition: service_started
+      redis:
+        condition: service_started
+      chirp_helper:
+        condition: service_completed_successfully
+    volumes:
+      - token:/token
+      - device:/device
 
 volumes:
   redisdata:
