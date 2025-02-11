@@ -1,10 +1,10 @@
 [submodule "bridge/bridge-forwarder"]
 	path = bridge/bridge-forwarder
-	url = git@github.com:lorabridge2/bridge-forwarder.git
+	url = https://github.com/lorabridge2/bridge-forwarder.git
 	update = merge
 [submodule "bridge/bridge-lorawan-tx"]
 	path = bridge/bridge-lorawan-tx
-	url = git@github.com:lorabridge2/bridge-lorawan-tx.git
+	url = https://github.com/lorabridge2/bridge-lorawan-tx.git
 	update = merge
 [submodule "gateway/gateway-home-assistant"]
 	path = gateway/gateway-home-assistant
@@ -12,7 +12,7 @@
 	update = merge
 [submodule "gateway/gateway-ha_integration"]
 	path = gateway/gateway-ha_integration
-	url = git@github.com:lorabridge2/gateway-ha_integration.git
+	url = https://github.com/lorabridge2/gateway-ha_integration.git
 	update = merge
 [submodule "gateway/gateway-forwarder"]
 	path = gateway/gateway-forwarder
@@ -20,15 +20,15 @@
 	update = merge
 [submodule "gateway/gateway-device_manager"]
 	path = gateway/gateway-device_manager
-	url = git@github.com:lorabridge2/gateway-device_manager.git
+	url = https://github.com/lorabridge2/gateway-device_manager.git
 	update = merge
 [submodule "gateway/gateway-converter"]
 	path = gateway/gateway-converter
-	url = git@github.com:lorabridge2/gateway-converter.git
+	url = https://github.com/lorabridge2/gateway-converter.git
 	update = merge
 [submodule "bridge/bridge-device-sse"]
 	path = bridge/bridge-device-sse
-	url = git@github.com:lorabridge2/bridge-device-sse.git
+	url = https://github.com/lorabridge2/bridge-device-sse.git
 	update = merge
 [submodule "bridge/bridge-device-interface"]
 	path = bridge/bridge-device-interface
@@ -40,33 +40,33 @@
 	update = merge
 [submodule "bridge/bridge-automation-manager"]
 	path = bridge/bridge-automation-manager
-	url = git@github.com:lorabridge2/bridge-automation-manager.git
+	url = https://github.com/lorabridge2/bridge-automation-manager.git
 	update = merge
 [submodule "bridge/bridge-lorawan-interface"]
 	path = bridge/bridge-lorawan-interface
-	url = git@github.com:lorabridge2/bridge-lorawan-interface.git
+	url = https://github.com/lorabridge2/bridge-lorawan-interface.git
 	update = merge
 [submodule "gateway/gateway-flow-manager"]
 	path = gateway/gateway-flow-manager
-	url = git@github.com:lorabridge2/gateway-flow-manager.git
+	url = https://github.com/lorabridge2/gateway-flow-manager.git
 	update = merge
 [submodule "gateway/gateway-flow-ui"]
 	path = gateway/gateway-flow-ui
-	url = git@github.com:lorabridge2/gateway-flow-ui.git
+	url = https://github.com/lorabridge2/gateway-flow-ui.git
 	update = merge
 [submodule "bridge/bridge-node-red"]
 	path = bridge/bridge-node-red
-	url = git@github.com:lorabridge2/bridge-node-red.git
+	url = https://github.com/lorabridge2/bridge-node-red.git
 	update = merge
 [submodule "bridge/bridge-lorawan-interface-watcher"]
 	path = bridge/bridge-lorawan-interface-watcher
-	url = git@github.com:lorabridge2/bridge-lorawan-interface-watcher.git
+	url = https://github.com/lorabridge2/bridge-lorawan-interface-watcher.git
 	update = merge
 [submodule "gateway/gateway-chirp-helper"]
 	path = gateway/gateway-chirp-helper
-	url = git@github.com:lorabridge2/gateway-chirp-helper.git
+	url = https://github.com/lorabridge2/gateway-chirp-helper.git
 	update = merge
 [submodule "gateway/gateway-connection-watcher"]
 	path = gateway/gateway-connection-watcher
-	url = git@github.com:lorabridge2/gateway-connection-watcher.git
+	url = https://github.com/lorabridge2/gateway-connection-watcher.git
 	update = merge
