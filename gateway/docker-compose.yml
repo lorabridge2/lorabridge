@@ -112,16 +112,15 @@ services:
     image: ghcr.io/lorabridge/gateway-forwarder:latest
     restart: unless-stopped
     volumes:
-      # - ./data:/app/data
-      # - /run/udev:/run/udev:ro
-      # - /sys/class/gpio:/sys/class/gpio
-      # - /sys:/sys
       # bind mount necessary gpio stuff
       - /sys/class/gpio:/sys/class/gpio
       - /sys/devices/platform/soc/fe200000.gpio:/sys/devices/platform/soc/fe200000.gpio
-      - type: bind
-        source: /sys/devices/platform/soc/soc:firmware/soc:firmware:gpio
+      - type: volume
+        source: gpio
         target: /sys/devices/platform/soc/soc:firmware/soc:firmware:gpio
+      # - type: bind
+      #   source: /sys/devices/platform/soc/soc:firmware/soc:firmware:gpio
+      #   target: /sys/devices/platform/soc/soc:firmware/soc:firmware:gpio
     environment:
       - TZ=Europe/Vienna
       # - ZIGBEE2MQTT_CONFIG_SERIAL_PORT=/dev/ttyUSB0
@@ -366,6 +365,12 @@ volumes:
   couchdb_data:
   token:
   device:
+  gpio:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/sys/devices/platform/soc/soc:firmware/soc:firmware:gpio"
 
 networks:
     loragatenet:
