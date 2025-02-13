@@ -109,11 +109,12 @@ services:
 
   gateway_fwd:
     # build: gateway-forwarder
-    image: ghcr.io/lorabridge/gateway-forwarder:latest
+    image: ghcr.io/lorabridge2/gateway-forwarder:latest
     restart: unless-stopped
     volumes:
       # bind mount necessary gpio stuff
-      - /sys/class/gpio:/sys/class/gpio
+      # only used for gpio sysfs
+      # - /sys/class/gpio:/sys/class/gpio
       - /sys/devices/platform/soc/fe200000.gpio:/sys/devices/platform/soc/fe200000.gpio
       - type: volume
         source: gpio
@@ -127,15 +128,18 @@ services:
     devices:
       - /dev/spidev0.0:/dev/spidev0.0
       - /dev/spidev0.1:/dev/spidev0.1
-    #   - /dev/gpiomem:/dev/gpiomem
+      # used for gpiod
+      - /dev/gpiochip0:/dev/gpiochip0
+      # used for gpiod
+      - /dev/gpiomem:/dev/gpiomem
       # - /dev/mem:/dev/mem
       # - /dev/ttyAMA0:/dev/ttyAMA0
     # privileged: true
     # cap_add:
     #   - SYS_RAWIO
     group_add:
-      - "999"
-      - "997"
+      - ${GID_SPI}
+      - ${GID_GPIO}
       # - spi
       # - gpio
     # user: 1337:1337
