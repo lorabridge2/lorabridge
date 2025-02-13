@@ -16,7 +16,7 @@
 	update = merge
 [submodule "gateway/gateway-forwarder"]
 	path = gateway/gateway-forwarder
-	url = https://github.com/lorabridge/gateway-forwarder.git
+	url = https://github.com/lorabridge2/gateway-forwarder.git
 	update = merge
 [submodule "gateway/gateway-device_manager"]
 	path = gateway/gateway-device_manager
