@@ -38,6 +38,9 @@ echo "NODERED_HOST=node-red" >> $FN
 echo "NODERED_PORT=1880" >> $FN
 echo "SERIAL_PORT=/dev/ttyACM0" >> $FN
 
+GID_DOCKER=$(getent group docker | cut -d ":" -f 3)
+echo "GID_DOCKER=$GID_DOCKER" >> $FN
+
 # gateway device
 FN=gateway/.env
 
@@ -78,3 +81,8 @@ echo "COUCHDB_USER=admin" >> $FN
 echo "COUCHDB_PASSWORD=couchdb" >> $FN
 echo "COUCHDB_PORT=5984" >> $FN
 echo "COUCHDB_DB=mydb" >> $FN
+
+GID_SPI=$(getent group spi | cut -d ":" -f 3)
+GID_GPIO=$(getent group gpio | cut -d ":" -f 3)
+echo "GID_SPI=$GID_SPI" >> $FN
+echo "GID_GPIO=$GID_GPIO" >> $FN
