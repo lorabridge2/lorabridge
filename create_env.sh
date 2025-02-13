@@ -63,7 +63,7 @@ echo "CHIRPSTACK_API_SECRET=$(openssl rand -base64 32)" >> $FN
 
 CHIRPSTACK_USER=admin
 CHIRPSTACK_PASS=$(tr -cd "[:graph:]" < /dev/urandom | head -c 20)
-CHIRPSTACK_HASH=$(python3 -c "import os;import hashlib;import base64;iterations=210000;dklen=64;salt=os.urandom(32);print(f'\$pbkdf2-sha512\$i={iterations},l={dklen}\${base64.b64encode(salt).decode()}\${base64.b64encode(hashlib.pbkdf2_hmac('sha512','$CHIRPSTACK_PASS'.encode(), salt,iterations=iterations,dklen=dklen)).decode()}')")
+CHIRPSTACK_HASH=$(python3 -c "import os;import hashlib;import base64;iterations=210000;dklen=64;salt=os.urandom(32);print(f'\$pbkdf2-sha512\$i={iterations},l={dklen}\${base64.b64encode(salt).decode().replace('=','')}\${base64.b64encode(hashlib.pbkdf2_hmac('sha512','$CHIRPSTACK_PASS'.encode(), salt,iterations=iterations,dklen=dklen)).decode().replace('=','')}')")
 
 echo "CHIRPSTACK_USER=$CHIRPSTACK_USER" >> $FN
 echo "CHIRPSTACK_PASSWORD=$CHIRPSTACK_PASS" >> $FN
