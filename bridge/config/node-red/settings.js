@@ -20,6 +20,9 @@
  *
  **/
 var fs = require('fs');
+if (!fs.existsSync()) {
+    fs.writeFileSync("/data/.config.runtime.json", JSON.stringify({ runtimeFlowState: "stop" }), "utf8")
+}
 var obj = JSON.parse(fs.readFileSync('/data/.config.runtime.json', 'utf8'));
 obj.runtimeFlowState = "stop";
 fs.writeFileSync("/data/.config.runtime.json", JSON.stringify(obj), "utf8");
