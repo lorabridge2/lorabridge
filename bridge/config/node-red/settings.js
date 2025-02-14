@@ -20,11 +20,28 @@
  *
  **/
 var fs = require('fs');
+const http = require('http');
+
 if (!fs.existsSync()) {
     fs.writeFileSync("/data/.config.runtime.json", JSON.stringify({ runtimeFlowState: "stop" }), "utf8")
 }
 var obj = JSON.parse(fs.readFileSync('/data/.config.runtime.json', 'utf8'));
 obj.runtimeFlowState = "stop";
+
+http.get('http://lorawan-interface:8000/', (res) => {
+    res.setEncoding('utf8');
+    let data = '';
+
+    res.on('data', (chunk) => data += chunk);
+    res.on('end', () => {
+        console.log('Response:', data)
+        const result = JSON.parse(data);
+        if (result['state'] == "start") {
+            obj.runtimeFlowState = "start"
+        }
+    });
+}).on('error', (err) => console.error('Error:', err));
+
 fs.writeFileSync("/data/.config.runtime.json", JSON.stringify(obj), "utf8");
 
 module.exports = {
