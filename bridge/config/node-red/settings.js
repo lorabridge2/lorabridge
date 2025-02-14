@@ -39,10 +39,12 @@ http.get('http://lorawan-interface:8000/', (res) => {
         if (result['state'] == "start") {
             obj.runtimeFlowState = "start"
         }
+        fs.writeFileSync("/data/.config.runtime.json", JSON.stringify(obj), "utf8");
     });
-}).on('error', (err) => console.error('Error:', err));
-
-fs.writeFileSync("/data/.config.runtime.json", JSON.stringify(obj), "utf8");
+}).on('error', (err) => {
+    console.error('Error:', err);
+    fs.writeFileSync("/data/.config.runtime.json", JSON.stringify(obj), "utf8");
+});
 
 module.exports = {
 
