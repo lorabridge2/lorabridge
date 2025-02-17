@@ -96,7 +96,7 @@ services:
     # https://github.com/docker/compose/issues/7277
     user: 1337:1337
     group_add:
-      - ${DOCKER_GID}
+      - ${GID_DOCKER}
     networks:
       - lorabridgenet
   ofelia:
