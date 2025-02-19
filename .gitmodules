@@ -34,10 +34,6 @@
 	path = bridge/bridge-device-interface
 	url = https://github.com/lorabridge/bridge-device-interface.git
 	update = merge
-[submodule "bridge/bridge-lcd-ui"]
-	path = bridge/bridge-lcd-ui
-	url = https://github.com/lorabridge/bridge-lcd-ui.git
-	update = merge
 [submodule "bridge/bridge-automation-manager"]
 	path = bridge/bridge-automation-manager
 	url = https://github.com/lorabridge2/bridge-automation-manager.git
