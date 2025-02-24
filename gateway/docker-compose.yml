@@ -150,7 +150,7 @@ services:
 
   homeassistant:
     # build: gateway-home-assistant
-    image: ghcr.io/lorabridge/gateway-home-assistant:latest
+    image: ghcr.io/lorabridge2/gateway-home-assistant:latest
     container_name: homeassistant
     # image: "ghcr.io/home-assistant/home-assistant:stable"
     depends_on: 
