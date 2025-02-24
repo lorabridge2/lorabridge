@@ -8,8 +8,8 @@ mkdir -p bridge/bridge-lorawan-tx/rpi_flashing/data
 
 FN=bridge/bridge-lorawan-tx/rpi_flashing/data/secrets.txt
 echo $DEV_KEY | tac -rs .. | echo "$(tr -d '\n')" > $FN
-echo $JOIN_EUI | tac -rs .. | echo "$(tr -d '\n')" > $FN
-echo $DEV_EUI | tac -rs .. | echo "$(tr -d '\n')" > $FN
+echo $JOIN_EUI | tac -rs .. | echo "$(tr -d '\n')" >> $FN
+echo $DEV_EUI | tac -rs .. | echo "$(tr -d '\n')" >> $FN
 
 vi $FN -c "set ff=dos" -c ":wq"
 
