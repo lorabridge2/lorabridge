@@ -25,7 +25,7 @@ JOIN_EUI=$(tr -cd "[:xdigit:]" < /dev/urandom | head -c 16)
 echo "LORA_JOIN_EUI=${JOIN_EUI^^}" >> $FN
 
 HTTP_USER=admin
-HTTP_PASS=$(tr -cd "[:graph:]" < /dev/urandom | head -c 20)
+HTTP_PASS=$(tr -cd "[:graph:]" < /dev/urandom | tr -d \' | head -c 20)
 HTPASSWD=$(htpasswd -nbB $HTTP_USER $HTTP_PASS)
 echo "BASIC_AUTH='$HTPASSWD'" >> $FN
 
@@ -65,20 +65,22 @@ echo "CHIRPSTACK_DEV_KEY=\x${DEV_KEY^^}" >> $FN
 echo "CHIRPSTACK_API_SECRET=$(openssl rand -base64 32)" >> $FN
 
 CHIRPSTACK_USER=admin
-CHIRPSTACK_PASS=$(tr -cd "[:graph:]" < /dev/urandom | head -c 20)
+CHIRPSTACK_PASS=$(tr -cd "[:graph:]" < /dev/urandom | tr -d \' | head -c 20)
 CHIRPSTACK_HASH=$(python3 -c "import os;import hashlib;import base64;iterations=210000;dklen=64;salt=os.urandom(32);print(f'\$pbkdf2-sha512\$i={iterations},l={dklen}\${base64.b64encode(salt).decode().replace("=","")}\${base64.b64encode(hashlib.pbkdf2_hmac('sha512','$CHIRPSTACK_PASS'.encode(), salt,iterations=iterations,dklen=dklen)).decode().replace("=","")}')")
 
 echo "CHIRPSTACK_USER=$CHIRPSTACK_USER" >> $FN
-echo "CHIRPSTACK_PASSWORD=$CHIRPSTACK_PASS" >> $FN
-echo "CHIRPSTACK_HASH=$CHIRPSTACK_HASH" >> $FN
+echo "CHIRPSTACK_PASSWORD='$CHIRPSTACK_PASS'" >> $FN
+echo "CHIRPSTACK_HASH='$CHIRPSTACK_HASH'" >> $FN
 
 echo "Your credentials for the chirpstack webinterface are"
 echo "username: $CHIRPSTACK_USER"
 echo "password: $CHIRPSTACK_PASS"
 echo "$(tput setaf 1)You need to remember them, storing them in a $(tput bold)password safe$(tput sgr0 setaf 1) is recommended!$(tput sgr0)"
 
+COUCHDB_PASSWORD=$(tr -cd "[:graph:]" < /dev/urandom | tr -d \' | head -c 20)
+
 echo "COUCHDB_USER=admin" >> $FN
-echo "COUCHDB_PASSWORD=couchdb" >> $FN
+echo "COUCHDB_PASSWORD='$COUCHDB_PASSWORD'" >> $FN
 echo "COUCHDB_PORT=5984" >> $FN
 echo "COUCHDB_DB=mydb" >> $FN
 
