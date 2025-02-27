@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   mosquitto:
-    image: eclipse-mosquitto:2
+    image: eclipse-mosquitto:2.0
     container_name: mqtt
     restart: unless-stopped
     volumes:
@@ -26,7 +26,6 @@ services:
       - FOR_MQTT_HOST=${MQTT_HOST}
       - FOR_MQTT_PORT=${MQTT_PORT}
       - FOR_MQTT_BASE_TOPIC=${MQTT_TOPIC}
-      - FOR_MQTT_SUB_TOPIC=${MQTT_SUB_TOPIC}
       - FOR_REDIS_HOST=${REDIS_HOST}
       - FOR_REDIS_PORT=${REDIS_PORT}
       - FOR_REDIS_DB=${REDIS_DB}
@@ -50,6 +49,8 @@ services:
       - MQTT_HOST=${MQTT_HOST}
       - MQTT_PORT=${MQTT_PORT}
       - PYTHONUNBUFFERED=1
+    volumes:
+      - flows:/home/decompression/backup
     restart: unless-stopped
     networks:
       - lorabridgenet
@@ -68,45 +69,29 @@ services:
       - /dev/ttyACM0:/dev/ttyACM0
     restart: unless-stopped
     group_add:
-      - "20"
+      - dialout
     networks:
       - lorabridgenet
-  # lcd-ui:
-  #   build: bridge-lcd-ui
-  #   image: localhost/bridge-lcd-ui:latest
-  #   volumes:
-  #     # bind mount necessary gpio stuff
-  #     - /sys/class/gpio:/sys/class/gpio
-  #     - /sys/devices/platform/soc/fe200000.gpio:/sys/devices/platform/soc/fe200000.gpio
-  #     - type: bind
-  #       source: /sys/devices/platform/soc/soc:firmware/soc:firmware:gpio
-  #       target: /sys/devices/platform/soc/soc:firmware/soc:firmware:gpio
-  #     - ofelia:/ofelia:ro
-  #   depends_on:
-  #     - mosquitto
-  #     - redis
-  #   environment:
-  #     - FOR_MQTT_HOST=${MQTT_HOST}
-  #     - FOR_MQTT_PORT=${MQTT_PORT}
-  #     - FOR_MQTT_BASE_TOPIC=${MQTT_TOPIC}
-  #     - FOR_REDIS_HOST=${REDIS_HOST}
-  #     - FOR_REDIS_PORT=${REDIS_PORT}
-  #     - FOR_REDIS_DB=${REDIS_DB}
-  #     - PYTHONUNBUFFERED=1
-  #   restart: unless-stopped
-  #   networks:
-  #     - lorabridgenet
-  #   devices:
-  #     - /dev/spidev0.0:/dev/spidev0.0
-  #     - /dev/spidev0.1:/dev/spidev0.1
-  #     - /dev/gpiomem:/dev/gpiomem
-  #     - /dev/i2c-1:/dev/i2c-1
-  #     - /dev/i2c-20:/dev/i2c-20
-  #     - /dev/i2c-21:/dev/i2c-21
-  #   group_add:
-  #     - "999"
-  #     - "997"
-  #     - "998"
+  lorawan-interface-watcher:
+    build: bridge-lorawan-interface-watcher
+    image: localhost/bridge-lorawan-interface-watcher:latest
+    environment:
+      - PYTHONUNBUFFERED=1
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_DB=${REDIS_DB}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    depends_on:
+      - redis
+    # using group names results in error
+    # https://github.com/docker/compose/issues/7277
+    user: 1337:1337
+    group_add:
+      - ${GID_DOCKER}
+    networks:
+      - lorabridgenet
   ofelia:
     image: mcuadros/ofelia:latest
     network_mode: host
@@ -114,6 +99,7 @@ services:
       - ./config/ofelia.conf:/etc/ofelia.conf:ro
       - ofelia:/ofelia
     command: daemon
+    restart: unless-stopped
   redis:
     image: redis:7-alpine
     volumes:
@@ -131,7 +117,7 @@ services:
     restart: unless-stopped
   zigbee2mqtt:
     container_name: zigbee2mqtt
-    image: koenkk/zigbee2mqtt
+    image: koenkk/zigbee2mqtt:1.30.3
     restart: unless-stopped
     volumes:
       # - ./data:/app/data
@@ -155,50 +141,6 @@ services:
     # entrypoint: "tail -f /dev/null"
     networks:
       - lorabridgenet
-  # lorawan_tx:
-  #   build: 
-  #     context: bridge-lorawan_tx
-  #     args: 
-  #       - IMG_VERSION=3
-  #   image: localhost/lorawan_tx:latest
-  #   restart: unless-stopped
-  #   volumes:
-  #     # - ./data:/app/data
-  #     - /run/udev:/run/udev:ro
-  #     # - /sys/class/gpio:/sys/class/gpio
-  #     # - /sys:/sys
-  #     # bind mount necessary gpio stuff
-  #     - /sys/class/gpio:/sys/class/gpio
-  #     - /sys/devices/platform/soc/fe200000.gpio:/sys/devices/platform/soc/fe200000.gpio
-  #     - type: bind
-  #       source: /sys/devices/platform/soc/soc:firmware/soc:firmware:gpio
-  #       target: /sys/devices/platform/soc/soc:firmware/soc:firmware:gpio
-  #   environment:
-  #     - TZ=Europe/Vienna
-  #     - DEV_EUI=${LORA_DEV_EUI}
-  #     - DEV_KEY=${LORA_DEV_KEY}
-  #     - REDIS_LIST=${REDIS_LIST}
-  #     # - ZIGBEE2MQTT_CONFIG_SERIAL_PORT=/dev/ttyUSB0
-  #   devices:
-  #     - /dev/spidev0.0:/dev/spidev0.0
-  #     - /dev/spidev0.1:/dev/spidev0.1
-  #     - /dev/gpiomem:/dev/gpiomem
-  #     # - /dev/mem:/dev/mem
-  #     # - /dev/ttyAMA0:/dev/ttyAMA0
-  #     # privileged: true
-  #     # cap_add:
-  #     #   - SYS_RAWIO
-  #   group_add:
-  #     - "999"
-  #     - "997"
-  #     # - spi
-  #     # needs root, because of /sys
-  #     # user: 1337:1337
-  #   networks:
-  #     - lorabridgenet
-  #   depends_on:
-  #     - redis
-  #   read_only: true
   interface:
     build:
       context: bridge-device-interface
@@ -212,7 +154,7 @@ services:
       - redis
       - sse
       - mosquitto
-    restart: on-failure
+    restart: unless-stopped
     networks:
       - lorabridgenet
     ports:
@@ -231,7 +173,7 @@ services:
     depends_on:
       - zigbee2mqtt
       - redis
-    restart: on-failure
+    restart: unless-stopped
     networks:
       - lorabridgenet
     ports:
@@ -244,10 +186,13 @@ services:
       - zdata:/usr/src/app/data
       - ofelia:/usr/src/app/stats:ro
   node-red:
-    image: nodered/node-red:latest
+    build: bridge-node-red
+    image: localhost/bridge-node-red:latest
+    #image: nodered/node-red:latest
     restart: unless-stopped
     depends_on:
       - mosquitto
+      - redis
     environment:
       - TZ=Europe/Vienna
     ports:
@@ -256,6 +201,9 @@ services:
       - lorabridgenet
     volumes:
       - node-red-data:/data
+      - ./config/node-red/settings.js:/data/settings.js:ro
+    healthcheck:
+      disable: true
 volumes:
   mdata:
   mlog:
@@ -263,7 +211,12 @@ volumes:
   zdata:
   ofelia:
   node-red-data:
+  flows:
 networks:
   lorabridgenet:
     attachable: true
     name: lorabridgenet
+  internal:
+    attachable: true
+    name: internal
+    internal: true

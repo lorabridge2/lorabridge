@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   chirpstack:
-    image: chirpstack/chirpstack:4
+    image: chirpstack/chirpstack:4.10
     command: -c /etc/chirpstack
     restart: unless-stopped
     environment:
@@ -23,7 +23,7 @@ services:
       - loragatenet
 
   chirpstack-gateway-bridge:
-    image: chirpstack/chirpstack-gateway-bridge:4
+    image: chirpstack/chirpstack-gateway-bridge:4.0
     # ports:
     #   - 1700:1700/udp
     # volumes:
@@ -47,6 +47,7 @@ services:
       - POSTGRES_PASSWORD=root 
       - POSTGRES_DEV_EUI=${CHIRPSTACK_DEV_EUI}
       - POSTGRES_DEV_KEY=${CHIRPSTACK_DEV_KEY}
+      - POSTGRES_HASH=${CHIRPSTACK_HASH}
     volumes:
       - ./configuration/postgresql2/initdb:/docker-entrypoint-initdb.d
       - postgresqldata2:/var/lib/postgresql/data
@@ -88,8 +89,6 @@ services:
   gateway_fwd:
     build: 
       context: gateway-forwarder
-      args:
-        - IMG_VERSION=3
     image: localhost/gateway_fwd:latest
     restart: unless-stopped
     volumes:
@@ -98,10 +97,9 @@ services:
       # - /sys/class/gpio:/sys/class/gpio
       # - /sys:/sys
       # bind mount necessary gpio stuff
-      - /sys/class/gpio:/sys/class/gpio
       - /sys/devices/platform/soc/fe200000.gpio:/sys/devices/platform/soc/fe200000.gpio
-      - type: bind
-        source: /sys/devices/platform/soc/soc:firmware/soc:firmware:gpio
+      - type: volume
+        source: gpio
         target: /sys/devices/platform/soc/soc:firmware/soc:firmware:gpio
     environment:
       - TZ=Europe/Vienna
@@ -109,15 +107,18 @@ services:
     devices:
       - /dev/spidev0.0:/dev/spidev0.0
       - /dev/spidev0.1:/dev/spidev0.1
-    #   - /dev/gpiomem:/dev/gpiomem
+      # used for gpiod
+      - /dev/gpiochip0:/dev/gpiochip0
+      # used for gpiod
+      - /dev/gpiomem:/dev/gpiomem
       # - /dev/mem:/dev/mem
       # - /dev/ttyAMA0:/dev/ttyAMA0
     # privileged: true
     # cap_add:
     #   - SYS_RAWIO
     group_add:
-      - "999"
-      - "997"
+      - ${GID_SPI}
+      - ${GID_GPIO}
       # - spi
       # - gpio
     # user: 1337:1337
@@ -131,6 +132,7 @@ services:
       context: gateway-home-assistant
       args:
         - IMG_VERSION=stable
+    imaage: localhost/gateway-home-assistant:latest
     container_name: homeassistant
     # image: "ghcr.io/home-assistant/home-assistant:stable"
     depends_on: 
@@ -154,13 +156,20 @@ services:
       - CON_MQTT_HOST=${MQTT_HOST}
       - CON_MQTT_PORT=${MQTT_PORT}
       - CON_CHIRP_TOPIC=${CHIRP_TOPIC}
-      - CON_DEV_MAN_TOPIC=${DEV_MAN_TOPIC}
+      # - CON_DEV_MAN_TOPIC=${DEV_MAN_TOPIC}
+      - DEV_REDIS_HOST=${REDIS_HOST}
+      - DEV_REDIS_PORT=${REDIS_PORT}
+      - DEV_REDIS_DB=${REDIS_DB}
+      - DEV_EUI=${CHIRPSTACK_DEV_EUI}
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
     networks:
       - loragatenet
+    volumes:
+      - device:/device
     depends_on:
       - mosquitto
+      - redis
 
   ha_integration:
     build: gateway-ha_integration
@@ -193,16 +202,23 @@ services:
       - DEV_REDIS_DB=${REDIS_DB}
       - DEV_STATE_TOPIC=${DEV_STATE_TOPIC}
       - DEV_DISCOVERY_TOPIC=${DEV_DISCOVERY_TOPIC}
+      - DEV_EUI=${CHIRPSTACK_DEV_EUI}
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
+    volumes:
+      - device:/device
     networks:
       - loragatenet
     depends_on:
-      - mosquitto
-      - redis
+      mosquitto:
+        condition: service_started
+      redis:
+        condition: service_started
+      chirp_helper:
+        condition: service_completed_successfully
   flow_ui:
-    # build:
-    #   context: bridge-device-interface
+    build:
+      context: gateway-flow-ui
     #   args:
     #     VITE_SSE_ADDR: http://sse:8080
     #     VITE_REDIS_CONN_STRING: redis://redis:6379
@@ -241,6 +257,8 @@ services:
       disable: true
 
   couchdb:
+    build:
+      context: couchdb-docker
     #image: couchdb:3
     image: localhost/couchdb-docker
     # image: ghcr.io/lorabridge2/couchdb-docker:latest
@@ -259,7 +277,7 @@ services:
     networks:
       - loragatenet
   flow_manager:
-    # build: gateway-device_manager
+    build: gateway-flow-manager
     # image: ghcr.io/lorabridge2/gateway-flow-manager:latest
     image: localhost/gateway-flow-manager:latest
     environment:
@@ -270,13 +288,65 @@ services:
       - DEV_REDIS_HOST=${REDIS_HOST}
       - DEV_REDIS_PORT=${REDIS_PORT}
       - DEV_REDIS_DB=${REDIS_DB}
+      - DEV_EUI=${CHIRPSTACK_DEV_EUI}
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
+    volumes:
+      - device:/device
     networks:
       - loragatenet
     depends_on:
-      - mosquitto
-      - redis
+      mosquitto:
+        condition: service_started
+      redis:
+        condition: service_started
+      chirp_helper:
+        condition: service_completed_successfully
+
+  chirp_helper:
+    build: gateway-chirp-helper
+    image: localhost/gateway-chirp-helper:latest
+    environment:
+      - CHIRP_HOST=chirpstack
+      - CHIRP_PORT=8080
+      - CHIRP_USER=${CHIRPSTACK_USER}
+      - CHIRP_PASSWORD=${CHIRPSTACK_PASSWORD}
+      - DEV_EUI=${CHIRPSTACK_DEV_EUI}
+      - PYTHONUNBUFFERED=1
+    restart: on-failure
+    networks:
+      - loragatenet
+    depends_on:
+      chirpstack:
+        condition: service_started
+    volumes:
+      - token:/token
+      - device:/device
+
+  connection-watcher:
+    build: gateway-connection-watcher
+    image: localhost/gateway-connection-watcher:latest
+    environment:
+      - CHIRP_HOST=chirpstack
+      - CHIRP_PORT=8080
+      - DEV_EUI=${CHIRPSTACK_DEV_EUI}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_DB=${REDIS_DB}
+      - PYTHONUNBUFFERED=1
+    restart: on-failure
+    networks:
+      - loragatenet
+    depends_on:
+      chirpstack:
+        condition: service_started
+      redis:
+        condition: service_started
+      chirp_helper:
+        condition: service_completed_successfully
+    volumes:
+      - token:/token
+      - device:/device
 
 volumes:
   redisdata:
@@ -285,6 +355,14 @@ volumes:
   mlog:
   postgresqldata2:
   couchdb_data:
+  token:
+  device:
+  gpio:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/sys/devices/platform/soc/soc:firmware/soc:firmware:gpio"
 
 networks:
     loragatenet:
