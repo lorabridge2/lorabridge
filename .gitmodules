@@ -66,3 +66,6 @@
 	path = gateway/gateway-home-assistant
 	url = https://github.com/lorabridge2/gateway-home-assistant.git
 	update = merge
+[submodule "gateway/couchdb-docker"]
+	path = gateway/couchdb-docker
+	url = https://github.com/lorabridge2/couchdb-docker.git
