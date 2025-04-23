@@ -178,7 +178,7 @@ services:
       start_period: 10s
       disable: true
   interface:
-    image: ghcr.io/lorabridge/bridge-device-interface:latest
+    image: ghcr.io/lorabridge2/bridge-device-interface:latest
     depends_on:
       - redis
       - sse
