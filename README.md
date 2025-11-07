@@ -84,7 +84,7 @@ For details on how to install LoRaBridge and how to setup automations, please re
 
 ## Installation
 
-Check out [user manual](https://lorabridge.github.io/setup/Installation.html) for installation and usage.
+Check out [user manual](https://lorabridge2.github.io/setup/Installation.html) for installation and usage.
 
 ## Known issues and limitations
 
